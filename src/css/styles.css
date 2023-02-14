@@ -19,6 +19,8 @@ body {
   margin-bottom: 16px;
 }
 
-li {
+ul {
+  margin: 0;
+  padding: 0;
   list-style: none;
 }
