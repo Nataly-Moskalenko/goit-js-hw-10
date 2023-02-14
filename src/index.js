@@ -1,26 +1,12 @@
 import './css/styles.css';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix/build/notiflix-notify-aio';
+import { fetchCountries } from './fetchCountries';
 
 const inputCountry = document.querySelector('#search-box');
 const countryList = document.querySelector('.country-list');
 const countryInfo = document.querySelector('.country-info');
 const DEBOUNCE_DELAY = 300;
-
-function fetchCountries(name) {
-  return fetch(
-    `https://restcountries.com/v2/name/${name}?fields=name,capital,population,flags,languages`
-  ).then(response => {
-    if (!response.ok) {
-      countryInfo.innerHTML = '';
-      countryList.innerHTML = '';
-      throw new Error(
-        Notiflix.Notify.failure('Oops, there is no country with that name')
-      );
-    }
-    return response.json();
-  });
-}
 
 function renderCountryList(countries) {
   const markup = countries
@@ -43,9 +29,11 @@ function renderCountryInfo({ name, flags, capital, population, languages }) {
         <img src='${flags.svg}' width='30'></img>
         <span>${name}</span>
       </h1>        
-      <p>${capital}</p>
-      <p>${population}</p>
-      <p>${languages.map(language => language.name).join(', ')}</p>
+      <p><b>Capital:</b> ${capital}</p>
+      <p><b>Population:</b> ${population}</p>
+      <p><b>Languages:</b> ${languages
+        .map(language => language.name)
+        .join(', ')}</p>
       `;
   countryInfo.innerHTML = markup;
   countryList.innerHTML = '';
@@ -70,12 +58,17 @@ function handleInput(event) {
           renderCountryInfo(names[0]);
         }
       })
-      .catch(error => console.error(error));
+      .catch(error => {
+        console.error(error);
+        countryInfo.innerHTML = '';
+        countryList.innerHTML = '';
+        Notiflix.Notify.failure('Oops, there is no country with that name');
+      });
   }
 }
 
-inputCountry.addEventListener('input', debounce(handleInput, DEBOUNCE_DELAY));
 inputCountry.addEventListener('focus', () => {
-  inputCountry.style.borderColor = 'blue';
+  inputCountry.style.borderColor = '#9393f1';
   inputCountry.style.outline = 'none';
 });
+inputCountry.addEventListener('input', debounce(handleInput, DEBOUNCE_DELAY));

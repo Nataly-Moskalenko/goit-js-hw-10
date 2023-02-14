@@ -24,3 +24,7 @@ ul {
   padding: 0;
   list-style: none;
 }
+
+input#search-box {
+  width: 300px;
+}
